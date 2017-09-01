@@ -167,20 +167,8 @@ def getRandomString(s, length):
 #--- main:
 
 
-def main():
-    #
-    parser = argparse.ArgumentParser(
-        description="Tira submission for PPM approach (koppel11)")
-    parser.add_argument("-i", action="store", help="path to corpus directory")
-    parser.add_argument("-o", action="store", help="path to output directory")
-    args = vars(parser.parse_args())
-
-    corpusdir = args["i"]
-    outputdir = args["o"]
-    if corpusdir == None or outputdir == None:
-        parser.print_help()
-        return
-
+def main(corpusdir, outputdir):
+    
     candidates = jsonhandler.candidates
     unknowns = jsonhandler.unknowns
     jsonhandler.loadJson(corpusdir)
@@ -247,4 +235,18 @@ def main():
     print("storing answers")
     jsonhandler.storeJson(outputdir, unknowns, authors, scores)
 
-main()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="Tira submission for PPM approach (koppel11)")
+    parser.add_argument("-i", action="store", help="path to corpus directory")
+    parser.add_argument("-o", action="store", help="path to output directory")
+    args = vars(parser.parse_args())
+
+    corpusdir = args["i"]
+    outputdir = args["o"]
+
+    if corpusdir == None or outputdir == None:
+        parser.print_help()
+
+    main(corpusdir, outputdir)
