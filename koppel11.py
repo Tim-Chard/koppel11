@@ -79,7 +79,7 @@ def cosMetric(v1, v2):
     return 1 - cosSim(v1, v2)
 
 def minmaxMetric(v1, v2):
-    return 1 - minmax(v1, v2):
+    return 1 - minmax(v1, v2)
 
 '''- cosSim:
 calculates cosine similarity of two vectors v1 and v2.
