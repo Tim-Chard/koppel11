@@ -74,6 +74,13 @@ def createFeatureMap(s, features):
             fmap[ngram] = vec[ngram]
     return fmap
 
+
+def cosMetric(v1, v2):
+    return 1 - cosSim(v1, v2)
+
+def minmaxMetric(v1, v2):
+    return 1 - minmax(v1, v2):
+
 '''- cosSim:
 calculates cosine similarity of two vectors v1 and v2.
 -> cosine(X, Y) = (X * Y)/(|X|*|Y|)
@@ -153,6 +160,22 @@ def testSim(x, y, fl, func):
     else:
         return minmax(fx, fy)
 
+
+
+def testMetric(x, y, fl, func):
+    fx = createFeatureMap(x, fl)
+    fy = createFeatureMap(y, fl)
+    if func == 0:
+        return cosMetric(fx, fy)
+    else:
+        return minmaxMetric(fx, fy)
+
+
+
+
+
+
+
 '''- getRandomString:
 Returns a random part of a string s
 that has a given length
@@ -219,11 +242,11 @@ def main(corpusdir, outputdir):
             ustring = "".join(utext.split()[:textlen])
             for i in range(repetitions):
                 rfl = random.sample(fl, len(fl) // 2)
-                sims = []
+                distances = []
                 for cand in candidates:
                     candstring = getRandomString(texts[cand], textlen)
-                    sims.append(testSim(candstring, ustring, rfl, 1))
-                wins[sims.index(max(sims))] += 1
+                    distances.append(testMetric(candstring, ustring, rfl, 1))
+                wins[distances.index(min(distances))] += 1
             score = max(wins) / float(repetitions)
             if score >= threshold:
                 authors.append(candidates[wins.index(max(wins))])
