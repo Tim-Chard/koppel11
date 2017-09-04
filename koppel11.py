@@ -24,21 +24,16 @@ import jsonhandler
 import random
 import argparse
 
+from collections import Counter
+
 #--- Methods:
 '''- create Vector:
 gets a string (e.g. Book), splits it into and returns a vector
 with all possible n-grams/features'''
 
 
-def createVector(s):
-    vector = {}
-    words = s.split()
-    for word in words:
-        if len(word) <= n:
-            add(vector, word)
-        else:
-            for i in range(len(word) - n + 1):
-                add(vector, word[i:i + n])
+def createVector(s): 
+    vector = Counter([word[i:i + n] for word in s.split() for i in range(max(1,len(word) - n + 1))]) 
     return vector
 
 '''- add:
