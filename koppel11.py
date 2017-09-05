@@ -34,8 +34,8 @@ with all possible n-grams/features'''
 
 
 def create_dict(s): 
-    dict = Counter([word[i:i + n] for word in s.split() for i in range(max(1,len(word) - n + 1))]) 
-    return dict
+    vec = Counter([word[i:i + n] for word in s.split() for i in range(max(1,len(word) - n + 1))]) 
+    return vec
 
 def tokenize(s):
     return [word[i:i + n] for word in s.split() for i in range(max(1,len(word) - n + 1))]
@@ -180,7 +180,6 @@ def get_random_tokens(tokens, length):
     r = random.randint(0, len(tokens) - length)
     return tokens[r:r + length]
 
-
 #--- main:
 
 def main(corpusdir, outputdir):
@@ -215,17 +214,14 @@ def main(corpusdir, outputdir):
     candidates = newcands
 
 
-    words_counts = [len(texts[cand].split()) for cand in texts]
-    minwords = min(words_counts)
-
     tokens = {cand : tokenize(texts[cand]) for cand in texts}
-    token_counts = [len(tokens[cand]) for cand in tokens]
-    min_tokens = min(token_counts)
+    min_tokens = min([len(tokens[cand]) for cand in tokens])
 
-    print(minwords, min_tokens)
+    print(min_tokens)
 
     base_features = training(corpus)
-    feature_corpus = {base_features[i] : i for i in range(len(base_features))}
+
+    #feature_corpus = {base_features[i] : i for i in range(len(base_features))}
     authors = []
     scores = []
 
@@ -234,9 +230,6 @@ def main(corpusdir, outputdir):
 
         unknown_text = jsonhandler.getUnknownText(file)
         unknown_len = len(unknown_text.split())
-        textlen = min(unknown_len, minwords)
-
-        #unknown_string = "".join(unknown_text.split()[:textlen])
 
         unknown_tokens = tokenize(unknown_text)
         token_len = min(len(unknown_tokens), min_tokens)
@@ -249,8 +242,7 @@ def main(corpusdir, outputdir):
         else:
             wins = [0] * len(candidates)
 
-            print(textlen)
-            
+            print(token_len)
             
             for i in range(repetitions):
                 sample_features = random.sample(base_features, len(base_features) // 2)
@@ -258,7 +250,7 @@ def main(corpusdir, outputdir):
                 
                 distances = []
                 for cand in candidates:
-                    cand_tokens = get_random_tokens(tokens[cand], textlen)
+                    cand_tokens = get_random_tokens(tokens[cand], token_len)
                     cand_features = create_feature_map_from_tokens(cand_tokens, sample_features)
 
                     dist = minmaxMetric(cand_features, unknown_features)
